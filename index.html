@@ -35,15 +35,14 @@
         .result {
             margin-top: 20px;
             font-size: 18px;
+            text-align: left;
+            display: inline-block;
         }
-        
     </style>
 </head>
 <body>
     <h1>Bubble Gum Simulator: Infinity Calculator</h1>
-    <p>Enter number of attempts, number of eggs you open at once, and the pet chance to find out when you'll get your legendary or secret pet in Bubble Gum Simulator: Infinity.</p>
-
-    
+    <p>Enter number of attempts, number of eggs you open at once, and the pet chance to find out when you'll get your legendary or secret pet.</p>
 
     <label for="attempts">Number of attempts (hatches):</label>
     <input type="number" id="attempts" placeholder="Enter the number of attempts" required><br>
@@ -63,76 +62,74 @@
 
     <script>
         function calculateChance() {
-            
-            const attempts = parseInt(document.getElementById("attempts").value);
+            const attempts = parseInt(document.getElementById("attempts").value, 10);
             let chance = parseFloat(document.getElementById("chance").value);
-            let speed = parseFloat(document.getElementById("speed").value);
-            let eggs = parseInt(document.getElementById("eggs").value);
+            const speed = parseFloat(document.getElementById("speed").value);
+            const eggs = parseInt(document.getElementById("eggs").value, 10);
 
-            if (isNaN(attempts) || attempts < 0 || isNaN(chance) || chance <= 0 || isNaN(speed) || speed <= 0 || isNaN(eggs) || eggs <= 0) {
+            if (isNaN(attempts) || attempts < 0 ||
+                isNaN(chance) || chance <= 0 ||
+                isNaN(speed) || speed <= 0 ||
+                isNaN(eggs) || eggs <= 0) {
                 document.getElementById("result").innerHTML = "Please enter valid data.";
                 return;
             }
 
-            // Ako je šansa uneta u procentima, pretvaramo je u decimalnu vrednost
-            chance = chance / 100;  // Ovo će konvertovati unos sa procentima u decimalnu vrednost
+            // Pretvaramo % u decimalu
+            chance = chance / 100;
 
-            // Računanje trenutne verovatnoće da ćeš dobiti peta
+            // 1) Trenutna verovatnoća da si već dobio peta
             const probability = 1 - Math.pow(1 - chance, attempts);
             const probabilityPercent = (probability * 100).toFixed(2);
 
-            // Računanje potrebnog broja pokušaja za 50%, 80%, i 95% šanse
-            const requiredAttempts30 = Math.log(1 - 0.3) / Math.log(1 - chance);
-            const requiredAttempts40 = Math.log(1 - 0.4) / Math.log(1 - chance);
-            const requiredAttempts50 = Math.log(1 - 0.5) / Math.log(1 - chance);
-            const requiredAttempts80 = Math.log(1 - 0.8) / Math.log(1 - chance);
-            const requiredAttempts95 = Math.log(1 - 0.95) / Math.log(1 - chance);
+            // 2) Potrebni pokušaji za 30%, 40%, 50%, 80%, 95%, 99%
+            const reqs = [0.3, 0.4, 0.5, 0.8, 0.95, 0.99].map(pct => {
+                const req = Math.log(1 - pct) / Math.log(1 - chance);
+                const rem = Math.max(0, Math.ceil(req) - attempts);
+                return rem;
+            });
+            const [remaining30, remaining40, remaining50, remaining80, remaining95, remaining99] = reqs;
 
-            // Računanje koliko pokušaja je još potrebno da se postigne željeni procenat šanse
-            const remainingAttempts30 = Math.max(0, Math.ceil(requiredAttempts30) - attempts);
-            const remainingAttempts40 = Math.max(0, Math.ceil(requiredAttempts40) - attempts);
-            const remainingAttempts50 = Math.max(0, Math.ceil(requiredAttempts50) - attempts);
-            const remainingAttempts80 = Math.max(0, Math.ceil(requiredAttempts80) - attempts);
-            const remainingAttempts95 = Math.max(0, Math.ceil(requiredAttempts95) - attempts);
-
-            // Prilagođavanje na broj jaja koja se otvaraju odjednom
-            const attemptsPerHatch = Math.ceil(remainingAttempts50 / eggs);
-
-            // Računanje vremena potrebnog za 50%, 80%, 95% šanse (kako bi dobio peta)
-            const timePerHatch = 4.7 / (speed / 100);  // Pretvaranje hatch speed u vreme po jajetu
-            const totalTime30 = Math.ceil(remainingAttempts30 / eggs) * timePerHatch;
-            const totalTime40 = Math.ceil(remainingAttempts40 / eggs) * timePerHatch;
-            const totalTime50 = attemptsPerHatch * timePerHatch;  // Vreme u sekundama
-            const totalTime80 = Math.ceil(remainingAttempts80 / eggs) * timePerHatch;
-            const totalTime95 = Math.ceil(remainingAttempts95 / eggs) * timePerHatch;
-
-            // Funkcija za pretvaranje vremena u sate i minute
-            function convertToHoursAndMinutes(timeInSeconds) {
-                const hours = Math.floor(timeInSeconds / 3600);
-                const minutes = Math.floor((timeInSeconds % 3600) / 60);
-                const seconds = Math.floor(timeInSeconds % 60);
-                return { hours, minutes, seconds };
+            // 3) Batch-evi i vreme za svaki od ciljeva
+            const timePerHatch = 4.7 / (speed / 100);  // sekundi po jajetu
+            function toHMS(sec) {
+                const h = Math.floor(sec / 3600);
+                sec %= 3600;
+                const m = Math.floor(sec / 60);
+                const s = Math.floor(sec % 60);
+                return { hours: h, minutes: m, seconds: s };
             }
+            const times = reqs.map(rem => {
+                const batches = Math.ceil(rem / eggs);
+                return toHMS(batches * timePerHatch);
+            });
+            const [time30, time40, time50, time80, time95, time99] = times;
+            const batches50 = Math.ceil(remaining50 / eggs);
 
-            // Konvertovanje vremena u sate i minute
-            const time30 = convertToHoursAndMinutes(totalTime30);
-            const time40 = convertToHoursAndMinutes(totalTime40);
-            const time50 = convertToHoursAndMinutes(totalTime50);
-            const time80 = convertToHoursAndMinutes(totalTime80);
-            const time95 = convertToHoursAndMinutes(totalTime95);
+            // 4) **Expected until next pet** (1/šansa)
+            const expectedHatches = 1 / chance;
+            const expectedBatches = Math.ceil(expectedHatches / eggs);
+            const expectedTime = toHMS(expectedBatches * timePerHatch);
 
-            // Prikazivanje rezultata
+            // Ispis rezultata
             document.getElementById("result").innerHTML = `
                 <p>Your current chance of getting a pet is <strong>${probabilityPercent}%</strong>.</p>
-                <p>For a 30% chance, you still need <strong>${remainingAttempts30}</strong> attempts and about <strong>${time30.hours} hours, ${time30.minutes} minutes and ${time30.seconds} seconds</strong>.</p>
-                <p>For a 40% chance, you still need <strong>${remainingAttempts40}</strong> attempts and about <strong>${time40.hours} hours, ${time40.minutes} minutes and ${time40.seconds} seconds</strong>.</p>
-                <p>For a 50% chance, you still need <strong>${remainingAttempts50}</strong> attempts and about <strong>${time50.hours} hours, ${time50.minutes} minutes and ${time50.seconds} seconds</strong>.</p>
-                <p>For a 80% chance, you still need <strong>${remainingAttempts80}</strong> attempts and about <strong>${time80.hours} hours, ${time80.minutes} minutes and ${time80.seconds} seconds</strong>.</p>
-                <p>For a 95% chance, you still need <strong>${remainingAttempts95}</strong> attempts and about <strong>${time95.hours} hours, ${time95.minutes} minutes and ${time95.seconds} seconds</strong>.</p>
+                
+                <p><strong>Expected until next pet</strong> (1/chance):</p>
+                <p>- Hatches: <strong>${expectedHatches.toFixed(0)}</strong></p>
+                <p>- Batches (of ${eggs} eggs): <strong>${expectedBatches}</strong></p>
+                <p>- Time: <strong>${expectedTime.hours}h ${expectedTime.minutes}m ${expectedTime.seconds}s</strong></p>
+                
+                <hr>
+                
+                <p>For a 30% chance: <strong>${remaining30}</strong> attempts, ~<strong>${time30.hours}h ${time30.minutes}m ${time30.seconds}s</strong>.</p>
+                <p>For a 40% chance: <strong>${remaining40}</strong> attempts, ~<strong>${time40.hours}h ${time40.minutes}m ${time40.seconds}s</strong>.</p>
+                <p>For a 50% chance: <strong>${remaining50}</strong> attempts, ~<strong>${time50.hours}h ${time50.minutes}m ${time50.seconds}s</strong>.</p>
+                <p>For an 80% chance: <strong>${remaining80}</strong> attempts, ~<strong>${time80.hours}h ${time80.minutes}m ${time80.seconds}s</strong>.</p>
+                <p>For a 95% chance: <strong>${remaining95}</strong> attempts, ~<strong>${time95.hours}h ${time95.minutes}m ${time95.seconds}s</strong>.</p>
+                <p>For a 99% chance: <strong>${remaining99}</strong> attempts, ~<strong>${time99.hours}h ${time99.minutes}m ${time99.seconds}s</strong>.</p>
             `;
         }
     </script>
-
-   
 </body>
 </html>
