@@ -93,11 +93,25 @@
             // 3) Batch-evi i vreme za svaki od ciljeva
             const timePerHatch = 4.7 / (speed / 100);  // sekundi po jajetu
             function toHMS(sec) {
-                const h = Math.floor(sec / 3600);
+                const secsInYear = 31536000; // 365 * 86400 (pretpostavljamo da godina ima 365 dana)
+                const secsInMonth = 2592000; // 30 * 86400 (pretpostavljamo da mesec ima 30 dana)
+                const secsInDay = 86400; // 24 * 3600
+
+                // Računanje godina, meseci, dana
+                const years = Math.floor(sec / secsInYear);
+                sec %= secsInYear;
+                const months = Math.floor(sec / secsInMonth);
+                sec %= secsInMonth;
+                const days = Math.floor(sec / secsInDay);
+                sec %= secsInDay;
+
+                // Računanje sati, minuta i sekundi
+                const hours = Math.floor(sec / 3600);
                 sec %= 3600;
-                const m = Math.floor(sec / 60);
-                const s = Math.floor(sec % 60);
-                return { hours: h, minutes: m, seconds: s };
+                const minutes = Math.floor(sec / 60);
+                const seconds = Math.floor(sec % 60);
+
+                return { years, months, days, hours, minutes, seconds };
             }
             const times = reqs.map(rem => {
                 const batches = Math.ceil(rem / eggs);
@@ -118,16 +132,16 @@
                 <p><strong>Expected until next pet</strong> (1/chance):</p>
                 <p>- Hatches: <strong>${expectedHatches.toFixed(0)}</strong></p>
                 <p>- Batches (of ${eggs} eggs): <strong>${expectedBatches}</strong></p>
-                <p>- Time: <strong>${expectedTime.hours}h ${expectedTime.minutes}m ${expectedTime.seconds}s</strong></p>
+                <p>- Time: <strong>${expectedTime.years}Y, ${expectedTime.months}M, ${expectedTime.days}D, ${expectedTime.hours}h ${expectedTime.minutes}m ${expectedTime.seconds}s</strong></p>
                 
                 <hr>
                 
-                <p>For a 30% chance: <strong>${remaining30}</strong> attempts, ~<strong>${time30.hours}h ${time30.minutes}m ${time30.seconds}s</strong>.</p>
-                <p>For a 40% chance: <strong>${remaining40}</strong> attempts, ~<strong>${time40.hours}h ${time40.minutes}m ${time40.seconds}s</strong>.</p>
-                <p>For a 50% chance: <strong>${remaining50}</strong> attempts, ~<strong>${time50.hours}h ${time50.minutes}m ${time50.seconds}s</strong>.</p>
-                <p>For an 80% chance: <strong>${remaining80}</strong> attempts, ~<strong>${time80.hours}h ${time80.minutes}m ${time80.seconds}s</strong>.</p>
-                <p>For a 95% chance: <strong>${remaining95}</strong> attempts, ~<strong>${time95.hours}h ${time95.minutes}m ${time95.seconds}s</strong>.</p>
-                <p>For a 99% chance: <strong>${remaining99}</strong> attempts, ~<strong>${time99.hours}h ${time99.minutes}m ${time99.seconds}s</strong>.</p>
+                <p>For a 30% chance: <strong>${remaining30}</strong> attempts, ~<strong>${time30.years}Y, ${time30.months}M, ${time30.days}D, ${time30.hours}h ${time30.minutes}m ${time30.seconds}s</strong>.</p>
+                <p>For a 40% chance: <strong>${remaining40}</strong> attempts, ~<strong>${time40.years}Y, ${time40.months}M, ${time40.days}D, ${time40.hours}h ${time40.minutes}m ${time40.seconds}s</strong>.</p>
+                <p>For a 50% chance: <strong>${remaining50}</strong> attempts, ~<strong>${time50.years}Y, ${time50.months}M, ${time50.days}D, ${time50.hours}h ${time50.minutes}m ${time50.seconds}s</strong>.</p>
+                <p>For an 80% chance: <strong>${remaining80}</strong> attempts, ~<strong>${time80.years}Y, ${time80.months}M, ${time80.days}D, ${time80.hours}h ${time80.minutes}m ${time80.seconds}s</strong>.</p>
+                <p>For a 95% chance: <strong>${remaining95}</strong> attempts, ~<strong>${time95.years}Y, ${time95.months}M, ${time95.days}D, ${time95.hours}h ${time95.minutes}m ${time95.seconds}s</strong>.</p>
+                <p>For a 99% chance: <strong>${remaining99}</strong> attempts, ~<strong>${time99.years}Y, ${time99.months}M, ${time99.days}D, ${time99.hours}h ${time99.minutes}m ${time99.seconds}s</strong>.</p>
             `;
         }
     </script>
