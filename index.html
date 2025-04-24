@@ -4,45 +4,125 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bubble Gum Simulator: Infinity Calculator</title>
-    <style>
+    <style id="theme-style">
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             color: #333;
+            padding: 50px;
             text-align: center;
-            padding: 20px;
+            transition: background 0.3s, color 0.3s;
         }
         h1 {
-            color: #5a2a84;
+            font-size: 3em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            transition: color 0.3s;
+        }
+        p {
+            font-size: 1.1em;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        label {
+            font-size: 1.1em;
+            display: block;
+            margin-top: 15px;
         }
         input, button {
-            padding: 10px;
-            margin: 10px;
-            font-size: 16px;
-            border-radius: 5px;
+            padding: 15px 20px;
+            margin: 10px 0;
+            font-size: 1.1em;
+            border-radius: 12px;
+            border: 2px solid #ddd;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            background-color: #fff;
         }
-        input {
-            width: 200px;
+        input:focus, button:focus {
+            outline: none;
+            border-color: #FFA500;
+            box-shadow: 0 0 5px rgba(255, 165, 0, 0.6);
         }
         button {
-            background-color: #5a2a84;
+            background-color: #FFA500;
             color: white;
             border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
         }
         button:hover {
-            background-color: #4b1f6a;
+            background-color: #FF8C00;
+            transform: scale(1.05);
         }
         .result {
-            margin-top: 20px;
-            font-size: 18px;
+            margin-top: 40px;
+            font-size: 1.2em;
             text-align: left;
             display: inline-block;
+            padding: 30px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 850px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+        }
+        .result p {
+            margin-bottom: 15px;
+        }
+        hr {
+            border: 1px solid #ddd;
+            margin: 25px 0;
+        }
+        .result strong {
+            color: #FFA500;
+        }
+
+        /* Light Theme */
+        .light-theme {
+            background: linear-gradient(135deg, #f5f5f5, #e0e0e0);
+            color: #333;
+        }
+        .light-theme h1 {
+            color: #FFA500;
+        }
+        .light-theme .result {
+            background: linear-gradient(135deg, #f9f9f9, #f1f1f1);
+        }
+
+        /* Dark Theme */
+        .dark-theme {
+            background: linear-gradient(135deg, #2a2a2a, #1a1a1a);
+            color: #ccc;
+        }
+        .dark-theme h1 {
+            color: #FFA500;
+        }
+        .dark-theme .result {
+            background: linear-gradient(135deg, #333333, #444444);
+        }
+        .dark-theme input, .dark-theme button {
+            background-color: #444;
+            border-color: #666;
+            color: #ddd;
+        }
+        .dark-theme button {
+            background-color: #FFA500;
         }
     </style>
 </head>
-<body>
+<body class="light-theme">
     <h1>Bubble Gum Simulator: Infinity Calculator</h1>
-    <p>Enter number of attempts, number of eggs you open at once, and the pet chance to find out when you'll get your legendary or secret pet.</p>
+    <p>Enter the number of attempts, the number of eggs you open at once, and the pet chance to find out when you'll get your legendary or secret pet.</p>
 
     <label for="attempts">Number of attempts (hatches):</label>
     <input type="number" id="attempts" placeholder="Enter the number of attempts" required><br>
@@ -60,6 +140,8 @@
 
     <div class="result" id="result"></div>
 
+    <button onclick="toggleTheme()">Toggle Dark/Light Theme</button>
+
     <script>
         function calculateChance() {
             const attempts = parseInt(document.getElementById("attempts").value, 10);
@@ -75,14 +157,14 @@
                 return;
             }
 
-            // Pretvaramo % u decimalu
+            // Convert % to decimal
             chance = chance / 100;
 
-            // 1) Trenutna verovatnoća da si već dobio peta
+            // 1) Current probability of getting a pet
             const probability = 1 - Math.pow(1 - chance, attempts);
             const probabilityPercent = (probability * 100).toFixed(2);
 
-            // 2) Potrebni pokušaji za 30%, 40%, 50%, 80%, 95%, 99%
+            // 2) Required attempts for 30%, 40%, 50%, 80%, 95%, 99%
             const reqs = [0.3, 0.4, 0.5, 0.8, 0.95, 0.99].map(pct => {
                 const req = Math.log(1 - pct) / Math.log(1 - chance);
                 const rem = Math.max(0, Math.ceil(req) - attempts);
@@ -125,9 +207,9 @@
             const expectedBatches = Math.ceil(expectedHatches / eggs);
             const expectedTime = toHMS(expectedBatches * timePerHatch);
 
-            // Ispis rezultata
-            document.getElementById("result").innerHTML = `
-                <p>Your current chance of getting a pet is <strong>${probabilityPercent}%</strong>.</p>
+            // Display results
+            document.getElementById("result").innerHTML = 
+                `<p>Your current chance of getting a pet is <strong>${probabilityPercent}%</strong>.</p>
                 
                 <p><strong>Expected until next pet</strong> (1/chance):</p>
                 <p>- Hatches: <strong>${expectedHatches.toFixed(0)}</strong></p>
@@ -143,6 +225,12 @@
                 <p>For a 95% chance: <strong>${remaining95}</strong> attempts, ~<strong>${time95.years}Y, ${time95.months}M, ${time95.days}D, ${time95.hours}h ${time95.minutes}m ${time95.seconds}s</strong>.</p>
                 <p>For a 99% chance: <strong>${remaining99}</strong> attempts, ~<strong>${time99.years}Y, ${time99.months}M, ${time99.days}D, ${time99.hours}h ${time99.minutes}m ${time99.seconds}s</strong>.</p>
             `;
+        }
+
+        function toggleTheme() {
+            const body = document.body;
+            body.classList.toggle("light-theme");
+            body.classList.toggle("dark-theme");
         }
     </script>
 </body>
