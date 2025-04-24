@@ -146,11 +146,122 @@
   <div class="form-container">
     <label for="attempts">Number of attempts (hatches):</label>
     <input type="number" id="attempts" placeholder="Enter the number of attempts" required>
+    
+    
 
-    <label for="chance">Pet chance (e.g. 0.0011 for 0.0011% or 2e-06 for 2e-06% 1 in 50,000,000):</label>
+    <label for="chance">Pet chance (e.g. 0.1 for 0.1%, 2e-06 for 2e-06%):</label>
     <div style="display:flex; gap:10px; width:100%; max-width:400px;">
       <input type="number" step="0.0000001" id="chance" placeholder="Enter the pet chance (original pet chance)" required style="flex:2;">
     </div>
+    <label for="petSelect">Or choose a Pet:</label>
+    <select id="petSelect" onchange="updateChanceFromPet()">
+      <option value="0">--- Select a Pet ---</option>
+      <option value="" disabled>----------------------- Legendary pets -----------------------</option>
+      
+      <option value="" disabled>- Spikey Egg -</option>
+      <option value="0.5">Emerald Golem (0.5%)</option>
+      
+      <option value="" disabled>- Magma Egg -</option>
+      <option value="0.25">Inferno Dragon (0.25%)</option>
+      
+      <option value="" disabled>- Crystal Egg -</option>
+      <option value="0.25">Unicorn (0.25%)</option>
+      <option value="0.1">Flying Pig (0.1%)</option>
+      
+      <option value="" disabled>- Lunar Egg -</option>
+      <option value="0.25">Lunar Serpent (0.25%)</option>
+      <option value="0.1">Electra (0.1%)</option>
+      
+      <option value="" disabled>- Void Egg -</option>
+      <option value="0.05">Dark Phoenix (0.05%)</option>
+      <option value="0.02">Neon Elemental (0.02%)</option>
+      <option value="0.0001">NULLVoid (0.0001%)</option>
+      
+      <option value="" disabled>- Hell Egg -</option>
+      <option value="0.025">Inferno Cube (0.025%)</option>
+      <option value="0.002">Virus (0.002%)</option>
+      
+      <option value="" disabled>- Nightmare Egg -</option>
+      <option value="0.004">Green Hydra (0.004%)</option>
+      <option value="0.001">Demonic Hydra (0.001%)</option>
+      
+      <option value="" disabled>- Rainbow Egg -</option>
+      <option value="0.001">Hexarium (0.001%)</option>
+      <option value="0.0005">Rainbow Shock (0.0005%)</option>
+      
+      <option value="" disabled>- Aura Egg -</option>
+      <option value="0.01">Sigma Serpent (0.01%)</option>
+      <option value="0.005">Manarium (0.005%)</option>
+      
+      <option value="" disabled>- Pastel Egg -</option>
+      <option value="0.004">Sweet Treat (0.004%)</option>
+      <option value="0.0008">Rainbow Marshmellow (0.0008%)</option>
+      
+      <option value="" disabled>- Bunny Egg -</option>
+      <option value="0.02">Seraphic Bunny (0.02%)</option>
+      <option value="0.001">Ethereal Bunny (0.001%)</option>
+      <option value="0.0001">Cardinal Bunny (0.0001%)</option>
+      
+      <option value="" disabled>- Throwback Egg -</option>
+      <option value="0.04">Easter Serpent (0.04%)</option>
+      <option value="0.002">Dualcorn (0.002%)</option>
+      <option value="0.0002">Holy Egg (0.0002%)</option>
+      
+      
+      
+      
+      <option value="" disabled>----------------------- Secret Pets -----------------------</option>
+      
+      <option value="" disabled>- Common Egg -</option>
+      <option value="1e-06">King Doggy (1e-06%)</option>
+      <option value="1e-08">Mythic King Doggy (1e-08%)</option>
+      <option value="2.5e-08">Shiny King Doggy (2.5e-08%)</option>
+      <option value="2.5e-10">Shiny Mythic King Doggy (2.5e-10%)</option>
+      
+      <option value="" disabled>- Nightmare Egg -</option>
+      <option value="2e-06">The Overlord (2e-06%)</option>
+      <option value="2e-08">Mythic The Overlord (2e-08%)</option>
+      <option value="5e-08">Shiny The Overlord (5e-08%)</option>
+      <option value="5e-10">Shiny Mythic The Overlord (5e-10%)</option>
+      
+      <option value="" disabled>- Aura Egg -</option>
+      <option value="0.0001">MAN FACE GOD (0.0001%)</option>
+      <option value="1e-06">Mythic MAN FACE GOD (1e-06%)</option>
+      <option value="2.5e-06">Shiny MAN FACE GOD (2.5e-06%)</option>
+      <option value="2.5e-08">Shiny Mythic MAN FACE GOD (2.5e-08%)</option>
+      
+      <option value="" disabled>- Bubble Pass -</option>
+      <option value="0.005">Avernus (0.005%)</option>
+      <option value="5e-05">Mythic Avernus (5e-05%)</option>
+      <option value="0.000125">Shiny Avernus (0.000125%)</option>
+      <option value="1.25e-06">Shiny Mythic Avernus (1.25e-06%)</option>
+      
+      <option value="" disabled>-- LIMITED SECRET PETS --</option>
+      
+      <option value="" disabled>- Pastel Egg -</option>
+      <option value="2e-06">Giant Chocolate Chicken (2e-06%)</option>
+      <option value="2e-08">Mythic Giant Chocolate Chicken (2e-08%)</option>
+      <option value="5e-08">Shiny Giant Chocolate Chicken (5e-08%)</option>
+      <option value="5e-10">Shiny Mythic Giant Chocolate Chicken (5e-10%)</option>
+      
+      <option value="" disabled>- Bunny Egg -</option>
+      <option value="1e-06">Easter Basket (1e-06%)</option>
+      <option value="1e-08">Mythic Easter Basket (1e-08%)</option>
+      <option value="2.5e-08">Shiny Easter Basket (2.5e-08%)</option>
+      <option value="2.5e-10">Shiny Mythic Easter Basket (2.5e-10%)</option>
+      
+      <option value="" disabled>- Throwback Egg -</option>
+      <option value="4e-07">Godly Gem (4e-07%)</option>
+      <option value="4e-09">Mythic Godly Gem (4e-09%)</option>
+      <option value="1e-08">Shiny Godly Gem (1e-08%)</option>
+      <option value="1e-10">Shiny Mythic Godly Gem (1e-10%)</option>
+      
+      <option value="1e-07">Dementor (1e-07%)</option>
+      <option value="1e-09">Mythic Dementor (1e-09%)</option>
+      <option value="2.5e-09">Shiny Dementor (2.5e-09%)</option>
+      <option value="2.5e-11">Shiny Mythic Dementor (2.5e-11%)</option>
+    </select>
+    
     <select id="multiplier" style="flex:1;">
         <option value="1">x1</option>
         <option value="5">x5</option>
@@ -178,6 +289,13 @@
     function toggleTheme() {
       document.body.classList.toggle('dark-theme');
       document.body.classList.toggle('light-theme');
+    }
+    
+     function updateChanceFromPet() {
+      const selected = document.getElementById("petSelect").value;
+      if (selected) {
+        document.getElementById("chance").value = selected;
+      }
     }
 
     function calculateChance() {
