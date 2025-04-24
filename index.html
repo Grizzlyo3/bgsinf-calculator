@@ -40,7 +40,7 @@
       max-width: 400px;
       text-align: left;
     }
-    input {
+    input, select {
       padding: 15px 20px;
       font-size: 1.1em;
       border-radius: 12px;
@@ -51,7 +51,7 @@
       background-color: #fff;
       transition: border-color 0.3s, box-shadow 0.3s;
     }
-    input:focus {
+    input:focus, select:focus {
       outline: none;
       border-color: #FFA500;
       box-shadow: 0 0 5px rgba(255,165,0,0.6);
@@ -124,23 +124,34 @@
       color: #ccc;
     }
     .dark-theme h1 { color: #FFA500; }
-    .dark-theme label { color: #FFFFFF; }
+    .dark-theme label { color: #FFFFFF }
     .dark-theme .result { background: linear-gradient(135deg, #333333, #444444); }
-    .dark-theme input { background-color: #444; border-color: #666; color: #ddd; }
+    .dark-theme input, .dark-theme select { background-color: #444; border-color: #666; color: #ddd; }
     .dark-theme .calculate-btn { background-color: #FFA500; }
   </style>
 </head>
 <body class="light-theme">
 
   <h1>Bubble Gum Simulator: Infinity Calculator</h1>
-  <p>Enter the number of attempts, the number of eggs you open at once, and the pet chance to find out when you'll get your legendary or secret pet.</p>
+  <p>Enter the number of attempts, the number of eggs you open at once, the pet chance, and your luck bonus to find out when you'll get your legendary or secret pet.</p>
 
   <div class="form-container">
     <label for="attempts">Number of attempts (hatches):</label>
     <input type="number" id="attempts" placeholder="Enter the number of attempts" required>
 
     <label for="chance">Pet chance (e.g. 0.0011 for 0.0011%):</label>
-    <input type="number" step="0.0000001" id="chance" placeholder="Enter the pet chance" required>
+    <div style="display:flex; gap:10px; width:100%; max-width:400px;">
+      <input type="number" step="0.0000001" id="chance" placeholder="Enter the pet chance (original pet chance)" required style="flex:2;">
+    </div>
+    <select id="multiplier" style="flex:1;">
+        <option value="1">x1</option>
+        <option value="5">x5</option>
+        <option value="10">x10</option>
+        <option value="25">x25</option>
+      </select>
+
+    <label for="luck">Luck bonus (%):</label>
+    <input type="number" id="luck" value="100" placeholder="Enter your luck bonus">
 
     <label for="speed">Hatch Speed (%):</label>
     <input type="number" id="speed" value="100" placeholder="Enter hatch speed" required>
@@ -164,16 +175,24 @@
     function calculateChance() {
       const attempts = parseInt(document.getElementById("attempts").value, 10);
       let chance = parseFloat(document.getElementById("chance").value);
+      const multiplier = parseInt(document.getElementById("multiplier").value, 10);
+      const luck = parseFloat(document.getElementById("luck").value);
       const speed = parseFloat(document.getElementById("speed").value);
       const eggs = parseInt(document.getElementById("eggs").value, 10);
 
       if (isNaN(attempts) || attempts < 0 ||
           isNaN(chance) || chance <= 0 ||
+          isNaN(luck) || luck < 0 ||
           isNaN(speed) || speed <= 0 ||
           isNaN(eggs) || eggs <= 0) {
         document.getElementById("result").innerHTML = "Please enter valid data.";
         return;
       }
+
+      // Apply multiplier
+      chance *= multiplier;
+      // Apply luck bonus
+      chance *= (1 + luck / 100);
 
       // Convert % to decimal
       chance = chance / 100;
@@ -183,7 +202,7 @@
       const probabilityPercent = (probability * 100).toFixed(2);
 
       // 2) Required attempts
-      const reqs = [0.3, 0.4, 0.5, 0.8, 0.95, 0.99].map(pct => {
+      const reqs = [0.3,0.4,0.5,0.8,0.95,0.99].map(pct => {
         const req = Math.log(1 - pct) / Math.log(1 - chance);
         return Math.max(0, Math.ceil(req) - attempts);
       });
@@ -192,24 +211,24 @@
       // 3) Time calculations
       const timePerHatch = 4.7 / (speed / 100);
       function toHMS(sec) {
-        const secsInYear = 31536000, secsInMonth = 2592000, secsInDay = 86400;
-        const years = Math.floor(sec / secsInYear); sec %= secsInYear;
-        const months = Math.floor(sec / secsInMonth); sec %= secsInMonth;
-        const days = Math.floor(sec / secsInDay); sec %= secsInDay;
-        const hours = Math.floor(sec / 3600); sec %= 3600;
-        const minutes = Math.floor(sec / 60), seconds = Math.floor(sec % 60);
+        const ys=31536000, ms=2592000, ds=86400;
+        const years=Math.floor(sec/ys); sec%=ys;
+        const months=Math.floor(sec/ms); sec%=ms;
+        const days=Math.floor(sec/ds); sec%=ds;
+        const hours=Math.floor(sec/3600); sec%=3600;
+        const minutes=Math.floor(sec/60), seconds=Math.floor(sec%60);
         return { years, months, days, hours, minutes, seconds };
       }
       const times = reqs.map(rem => {
-        const batches = Math.ceil(rem / eggs);
-        return toHMS(batches * timePerHatch);
+        const batches = Math.ceil(rem/eggs);
+        return toHMS(batches*timePerHatch);
       });
-      const [time30, time40, time50, time80, time95, time99] = times;
+      const [time30,time40,time50,time80,time95,time99] = times;
 
-      // 4) Expected next
-      const expectedHatches = (1 / chance).toFixed(0);
-      const expectedBatches = Math.ceil(expectedHatches / eggs);
-      const expectedTime = toHMS(expectedBatches * timePerHatch);
+      // 4) Expected until next pet
+      const expectedHatches = (1/chance).toFixed(0);
+      const expectedBatches = Math.ceil(expectedHatches/eggs);
+      const expectedTime = toHMS(expectedBatches*timePerHatch);
 
       // Display results
       document.getElementById("result").innerHTML =
@@ -225,7 +244,7 @@
         <p>For a 30% chance: <strong>${remaining30}</strong> attempts, ~<strong>${time30.years}Y, ${time30.months}M, ${time30.days}D, ${time30.hours}h ${time30.minutes}m ${time30.seconds}s</strong>.</p>
         <p>For a 40% chance: <strong>${remaining40}</strong> attempts, ~<strong>${time40.years}Y, ${time40.months}M, ${time40.days}D, ${time40.hours}h ${time40.minutes}m ${time40.seconds}s</strong>.</p>
         <p>For a 50% chance: <strong>${remaining50}</strong> attempts, ~<strong>${time50.years}Y, ${time50.months}M, ${time50.days}D, ${time50.hours}h ${time50.minutes}m ${time50.seconds}s</strong>.</p>
-        <p>For a 80% chance: <strong>${remaining80}</strong> attempts, ~<strong>${time80.years}Y, ${time80.months}M, ${time80.days}D, ${time80.hours}h ${time80.minutes}m ${time80.seconds}s</strong>.</p>
+        <p>For an 80% chance: <strong>${remaining80}</strong> attempts, ~<strong>${time80.years}Y, ${time80.months}M, ${time80.days}D, ${time80.hours}h ${time80.minutes}m ${time80.seconds}s</strong>.</p>
         <p>For a 95% chance: <strong>${remaining95}</strong> attempts, ~<strong>${time95.years}Y, ${time95.months}M, ${time95.days}D, ${time95.hours}h ${time95.minutes}m ${time95.seconds}s</strong>.</p>
         <p>For a 99% chance: <strong>${remaining99}</strong> attempts, ~<strong>${time99.years}Y, ${time99.months}M, ${time99.days}D, ${time99.hours}h ${time99.minutes}m ${time99.seconds}s</strong>.</p>`;
     }
