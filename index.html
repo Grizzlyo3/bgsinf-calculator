@@ -1,237 +1,234 @@
 <!DOCTYPE html>
 <html lang="sr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bubble Gum Simulator: Infinity Calculator</title>
-    <style id="theme-style">
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: #333;
-            padding: 50px;
-            text-align: center;
-            transition: background 0.3s, color 0.3s;
-        }
-        h1 {
-            font-size: 3em;
-            margin-bottom: 20px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-            transition: color 0.3s;
-        }
-        p {
-            font-size: 1.1em;
-            margin-bottom: 30px;
-            line-height: 1.6;
-        }
-        label {
-            font-size: 1.1em;
-            display: block;
-            margin-top: 15px;
-        }
-        input, button {
-            padding: 15px 20px;
-            margin: 10px 0;
-            font-size: 1.1em;
-            border-radius: 12px;
-            border: 2px solid #ddd;
-            width: 100%;
-            max-width: 400px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            background-color: #fff;
-        }
-        input:focus, button:focus {
-            outline: none;
-            border-color: #FFA500;
-            box-shadow: 0 0 5px rgba(255, 165, 0, 0.6);
-        }
-        button {
-            background-color: #FFA500;
-            color: white;
-            border: none;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-        }
-        button:hover {
-            background-color: #FF8C00;
-            transform: scale(1.05);
-        }
-        .result {
-            margin-top: 40px;
-            font-size: 1.2em;
-            text-align: left;
-            display: inline-block;
-            padding: 30px;
-            background-color: #ffffff;
-            border-radius: 12px;
-            width: 100%;
-            max-width: 850px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            margin-left: auto;
-            margin-right: auto;
-            text-align: center;
-        }
-        .result p {
-            margin-bottom: 15px;
-        }
-        hr {
-            border: 1px solid #ddd;
-            margin: 25px 0;
-        }
-        .result strong {
-            color: #FFA500;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bubble Gum Simulator: Infinity Calculator</title>
+  <style id="theme-style">
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #333;
+      padding: 50px;
+      text-align: center;
+      transition: background 0.3s, color 0.3s;
+      position: relative;
+      min-height: 100vh;
+    }
+    h1 {
+      font-size: 3em;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+    p {
+      font-size: 1.1em;
+      margin-bottom: 30px;
+      line-height: 1.6;
+    }
 
-        /* Light Theme */
-        .light-theme {
-            background: linear-gradient(135deg, #f5f5f5, #e0e0e0);
-            color: #333;
-        }
-        .light-theme h1 {
-            color: #FFA500;
-        }
-        .light-theme .result {
-            background: linear-gradient(135deg, #f9f9f9, #f1f1f1);
-        }
+    /* FORM CONTAINER */
+    .form-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    label {
+      font-size: 1.1em;
+      color: #444;
+      width: 100%;
+      max-width: 400px;
+      text-align: left;
+    }
+    input {
+      padding: 15px 20px;
+      font-size: 1.1em;
+      border-radius: 12px;
+      border: 2px solid #ddd;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      background-color: #fff;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    input:focus {
+      outline: none;
+      border-color: #FFA500;
+      box-shadow: 0 0 5px rgba(255,165,0,0.6);
+    }
 
-        /* Dark Theme */
-        .dark-theme {
-            background: linear-gradient(135deg, #2a2a2a, #1a1a1a);
-            color: #ccc;
-        }
-        .dark-theme h1 {
-            color: #FFA500;
-        }
-        .dark-theme .result {
-            background: linear-gradient(135deg, #333333, #444444);
-        }
-        .dark-theme input, .dark-theme button {
-            background-color: #444;
-            border-color: #666;
-            color: #ddd;
-        }
-        .dark-theme button {
-            background-color: #FFA500;
-        }
-    </style>
+    /* CALCULATE BUTTON */
+    .calculate-btn {
+      padding: 15px 40px;
+      font-size: 1.1em;
+      border-radius: 12px;
+      border: none;
+      background-color: #FFA500;
+      color: #fff;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.2s;
+      margin-top: 20px;
+      margin-bottom: 40px;
+    }
+    .calculate-btn:hover {
+      background-color: #FF8C00;
+      transform: scale(1.05);
+    }
+
+    /* RESULT BOX */
+    .result {
+      font-size: 1.2em;
+      padding: 30px;
+      background: linear-gradient(135deg, #f9f9f9, #f1f1f1);
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      max-width: 850px;
+      margin: 0 auto 60px;
+      text-align: center;
+      line-height: 1.8;
+    }
+    .result p { margin-bottom: 15px; }
+    .result strong { color: #FFA500; }
+    hr { border: 1px solid #ddd; margin: 25px 0; }
+
+    /* THEME TOGGLE */
+    .theme-toggle {
+      padding: 10px 20px;
+      font-size: 1em;
+      border: none;
+      border-radius: 12px;
+      background-color: #FFA500;
+      color: #fff;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .theme-toggle:hover {
+      background-color: #FF8C00;
+    }
+
+    /* LIGHT THEME */
+    .light-theme {
+      background: linear-gradient(135deg, #f5f5f5, #e0e0e0);
+      color: #333;
+    }
+    .light-theme h1 { color: #FFA500; }
+    .light-theme .result { background: linear-gradient(135deg, #f9f9f9, #f1f1f1); }
+
+    /* DARK THEME */
+    .dark-theme {
+      background: linear-gradient(135deg, #2a2a2a, #1a1a1a);
+      color: #ccc;
+    }
+    .dark-theme h1 { color: #FFA500; }
+    .dark-theme label { color: #FFFFFF; }
+    .dark-theme .result { background: linear-gradient(135deg, #333333, #444444); }
+    .dark-theme input { background-color: #444; border-color: #666; color: #ddd; }
+    .dark-theme .calculate-btn { background-color: #FFA500; }
+  </style>
 </head>
 <body class="light-theme">
-    <h1>Bubble Gum Simulator: Infinity Calculator</h1>
-    <p>Enter the number of attempts, the number of eggs you open at once, and the pet chance to find out when you'll get your legendary or secret pet.</p>
 
+  <h1>Bubble Gum Simulator: Infinity Calculator</h1>
+  <p>Enter the number of attempts, the number of eggs you open at once, and the pet chance to find out when you'll get your legendary or secret pet.</p>
+
+  <div class="form-container">
     <label for="attempts">Number of attempts (hatches):</label>
-    <input type="number" id="attempts" placeholder="Enter the number of attempts" required><br>
+    <input type="number" id="attempts" placeholder="Enter the number of attempts" required>
 
     <label for="chance">Pet chance (e.g. 0.0011 for 0.0011%):</label>
-    <input type="number" step="0.0000001" id="chance" placeholder="Enter the pet chance" required><br>
+    <input type="number" step="0.0000001" id="chance" placeholder="Enter the pet chance" required>
 
     <label for="speed">Hatch Speed (%):</label>
-    <input type="number" id="speed" value="100" placeholder="Enter hatch speed" required><br>
+    <input type="number" id="speed" value="100" placeholder="Enter hatch speed" required>
 
     <label for="eggs">Number of eggs you open at once:</label>
-    <input type="number" id="eggs" value="1" placeholder="Enter the number of eggs" required><br>
+    <input type="number" id="eggs" value="1" placeholder="Enter the number of eggs" required>
 
-    <button onclick="calculateChance()">Calculate</button>
+    <button class="calculate-btn" onclick="calculateChance()">Calculate</button>
+  </div>
 
-    <div class="result" id="result"></div>
+  <div class="result" id="result"></div>
 
-    <button onclick="toggleTheme()">Toggle Dark/Light Theme</button>
+  <button class="theme-toggle" onclick="toggleTheme()">Toggle Dark/Light Theme</button>
 
-    <script>
-        function calculateChance() {
-            const attempts = parseInt(document.getElementById("attempts").value, 10);
-            let chance = parseFloat(document.getElementById("chance").value);
-            const speed = parseFloat(document.getElementById("speed").value);
-            const eggs = parseInt(document.getElementById("eggs").value, 10);
+  <script>
+    function toggleTheme() {
+      document.body.classList.toggle('dark-theme');
+      document.body.classList.toggle('light-theme');
+    }
 
-            if (isNaN(attempts) || attempts < 0 ||
-                isNaN(chance) || chance <= 0 ||
-                isNaN(speed) || speed <= 0 ||
-                isNaN(eggs) || eggs <= 0) {
-                document.getElementById("result").innerHTML = "Please enter valid data.";
-                return;
-            }
+    function calculateChance() {
+      const attempts = parseInt(document.getElementById("attempts").value, 10);
+      let chance = parseFloat(document.getElementById("chance").value);
+      const speed = parseFloat(document.getElementById("speed").value);
+      const eggs = parseInt(document.getElementById("eggs").value, 10);
 
-            // Convert % to decimal
-            chance = chance / 100;
+      if (isNaN(attempts) || attempts < 0 ||
+          isNaN(chance) || chance <= 0 ||
+          isNaN(speed) || speed <= 0 ||
+          isNaN(eggs) || eggs <= 0) {
+        document.getElementById("result").innerHTML = "Please enter valid data.";
+        return;
+      }
 
-            // 1) Current probability of getting a pet
-            const probability = 1 - Math.pow(1 - chance, attempts);
-            const probabilityPercent = (probability * 100).toFixed(2);
+      // Convert % to decimal
+      chance = chance / 100;
 
-            // 2) Required attempts for 30%, 40%, 50%, 80%, 95%, 99%
-            const reqs = [0.3, 0.4, 0.5, 0.8, 0.95, 0.99].map(pct => {
-                const req = Math.log(1 - pct) / Math.log(1 - chance);
-                const rem = Math.max(0, Math.ceil(req) - attempts);
-                return rem;
-            });
-            const [remaining30, remaining40, remaining50, remaining80, remaining95, remaining99] = reqs;
+      // 1) Current probability
+      const probability = 1 - Math.pow(1 - chance, attempts);
+      const probabilityPercent = (probability * 100).toFixed(2);
 
-            // 3) Batch-evi i vreme za svaki od ciljeva
-            const timePerHatch = 4.7 / (speed / 100);  // sekundi po jajetu
-            function toHMS(sec) {
-                const secsInYear = 31536000; // 365 * 86400 (pretpostavljamo da godina ima 365 dana)
-                const secsInMonth = 2592000; // 30 * 86400 (pretpostavljamo da mesec ima 30 dana)
-                const secsInDay = 86400; // 24 * 3600
+      // 2) Required attempts
+      const reqs = [0.3, 0.4, 0.5, 0.8, 0.95, 0.99].map(pct => {
+        const req = Math.log(1 - pct) / Math.log(1 - chance);
+        return Math.max(0, Math.ceil(req) - attempts);
+      });
+      const [remaining30, remaining40, remaining50, remaining80, remaining95, remaining99] = reqs;
 
-                // Računanje godina, meseci, dana
-                const years = Math.floor(sec / secsInYear);
-                sec %= secsInYear;
-                const months = Math.floor(sec / secsInMonth);
-                sec %= secsInMonth;
-                const days = Math.floor(sec / secsInDay);
-                sec %= secsInDay;
+      // 3) Time calculations
+      const timePerHatch = 4.7 / (speed / 100);
+      function toHMS(sec) {
+        const secsInYear = 31536000, secsInMonth = 2592000, secsInDay = 86400;
+        const years = Math.floor(sec / secsInYear); sec %= secsInYear;
+        const months = Math.floor(sec / secsInMonth); sec %= secsInMonth;
+        const days = Math.floor(sec / secsInDay); sec %= secsInDay;
+        const hours = Math.floor(sec / 3600); sec %= 3600;
+        const minutes = Math.floor(sec / 60), seconds = Math.floor(sec % 60);
+        return { years, months, days, hours, minutes, seconds };
+      }
+      const times = reqs.map(rem => {
+        const batches = Math.ceil(rem / eggs);
+        return toHMS(batches * timePerHatch);
+      });
+      const [time30, time40, time50, time80, time95, time99] = times;
 
-                // Računanje sati, minuta i sekundi
-                const hours = Math.floor(sec / 3600);
-                sec %= 3600;
-                const minutes = Math.floor(sec / 60);
-                const seconds = Math.floor(sec % 60);
+      // 4) Expected next
+      const expectedHatches = (1 / chance).toFixed(0);
+      const expectedBatches = Math.ceil(expectedHatches / eggs);
+      const expectedTime = toHMS(expectedBatches * timePerHatch);
 
-                return { years, months, days, hours, minutes, seconds };
-            }
-            const times = reqs.map(rem => {
-                const batches = Math.ceil(rem / eggs);
-                return toHMS(batches * timePerHatch);
-            });
-            const [time30, time40, time50, time80, time95, time99] = times;
-            const batches50 = Math.ceil(remaining50 / eggs);
-
-            // 4) **Expected until next pet** (1/šansa)
-            const expectedHatches = 1 / chance;
-            const expectedBatches = Math.ceil(expectedHatches / eggs);
-            const expectedTime = toHMS(expectedBatches * timePerHatch);
-
-            // Display results
-            document.getElementById("result").innerHTML = 
-                `<p>Your current chance of getting a pet is <strong>${probabilityPercent}%</strong>.</p>
+      // Display results
+      document.getElementById("result").innerHTML =
+        `<p>Your current chance of getting a pet is <strong>${probabilityPercent}%</strong>.</p>
                 
-                <p><strong>Expected until next pet</strong> (1/chance):</p>
-                <p>- Hatches: <strong>${expectedHatches.toFixed(0)}</strong></p>
-                <p>- Batches (of ${eggs} eggs): <strong>${expectedBatches}</strong></p>
-                <p>- Time: <strong>${expectedTime.years}Y, ${expectedTime.months}M, ${expectedTime.days}D, ${expectedTime.hours}h ${expectedTime.minutes}m ${expectedTime.seconds}s</strong></p>
-                
-                <hr>
-                
-                <p>For a 30% chance: <strong>${remaining30}</strong> attempts, ~<strong>${time30.years}Y, ${time30.months}M, ${time30.days}D, ${time30.hours}h ${time30.minutes}m ${time30.seconds}s</strong>.</p>
-                <p>For a 40% chance: <strong>${remaining40}</strong> attempts, ~<strong>${time40.years}Y, ${time40.months}M, ${time40.days}D, ${time40.hours}h ${time40.minutes}m ${time40.seconds}s</strong>.</p>
-                <p>For a 50% chance: <strong>${remaining50}</strong> attempts, ~<strong>${time50.years}Y, ${time50.months}M, ${time50.days}D, ${time50.hours}h ${time50.minutes}m ${time50.seconds}s</strong>.</p>
-                <p>For an 80% chance: <strong>${remaining80}</strong> attempts, ~<strong>${time80.years}Y, ${time80.months}M, ${time80.days}D, ${time80.hours}h ${time80.minutes}m ${time80.seconds}s</strong>.</p>
-                <p>For a 95% chance: <strong>${remaining95}</strong> attempts, ~<strong>${time95.years}Y, ${time95.months}M, ${time95.days}D, ${time95.hours}h ${time95.minutes}m ${time95.seconds}s</strong>.</p>
-                <p>For a 99% chance: <strong>${remaining99}</strong> attempts, ~<strong>${time99.years}Y, ${time99.months}M, ${time99.days}D, ${time99.hours}h ${time99.minutes}m ${time99.seconds}s</strong>.</p>
-            `;
-        }
-
-        function toggleTheme() {
-            const body = document.body;
-            body.classList.toggle("light-theme");
-            body.classList.toggle("dark-theme");
-        }
-    </script>
+        <p><strong>Expected until next pet</strong> (1/chance):</p>
+        <p>- Hatches: <strong>${expectedHatches}</strong></p>
+        <p>- Batches (of ${eggs} eggs): <strong>${expectedBatches}</strong></p>
+        <p>- Time: <strong>${expectedTime.years}Y, ${expectedTime.months}M, ${expectedTime.days}D, ${expectedTime.hours}h ${expectedTime.minutes}m ${expectedTime.seconds}s</strong></p>
+        
+        <hr>
+        
+        <p>For a 30% chance: <strong>${remaining30}</strong> attempts, ~<strong>${time30.years}Y, ${time30.months}M, ${time30.days}D, ${time30.hours}h ${time30.minutes}m ${time30.seconds}s</strong>.</p>
+        <p>For a 40% chance: <strong>${remaining40}</strong> attempts, ~<strong>${time40.years}Y, ${time40.months}M, ${time40.days}D, ${time40.hours}h ${time40.minutes}m ${time40.seconds}s</strong>.</p>
+        <p>For a 50% chance: <strong>${remaining50}</strong> attempts, ~<strong>${time50.years}Y, ${time50.months}M, ${time50.days}D, ${time50.hours}h ${time50.minutes}m ${time50.seconds}s</strong>.</p>
+        <p>For a 80% chance: <strong>${remaining80}</strong> attempts, ~<strong>${time80.years}Y, ${time80.months}M, ${time80.days}D, ${time80.hours}h ${time80.minutes}m ${time80.seconds}s</strong>.</p>
+        <p>For a 95% chance: <strong>${remaining95}</strong> attempts, ~<strong>${time95.years}Y, ${time95.months}M, ${time95.days}D, ${time95.hours}h ${time95.minutes}m ${time95.seconds}s</strong>.</p>
+        <p>For a 99% chance: <strong>${remaining99}</strong> attempts, ~<strong>${time99.years}Y, ${time99.months}M, ${time99.days}D, ${time99.hours}h ${time99.minutes}m ${time99.seconds}s</strong>.</p>`;
+    }
+  </script>
 </body>
 </html>
